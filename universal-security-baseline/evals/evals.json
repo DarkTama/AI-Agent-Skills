@@ -1,0 +1,23 @@
+{
+  "skill_name": "universal-security-baseline",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this FastAPI endpoint code before PR merge: user submits credentials, endpoint builds raw SQL string `f'SELECT * FROM users WHERE username = {username}'`, and logs `f'User {username} authenticated with password {password}'`. Does this pass the security baseline?",
+      "expected_output": "Identifies SEC-OWASP-01 (SQL concatenation) and SEC-MITRE-02 (sensitive data in log statements) as critical PR blocking violations, provides parameterized query fix and masked log fix.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We are deploying a new microservice that calls external payment gateway and compares HMAC webhook signatures using `crypto.createHmac(...).digest('hex') === signature`. Also unhandled exceptions return `err.stack` in response. Audit this against universal security baselines.",
+      "expected_output": "Flags SEC-OWASP-03 (non-constant-time HMAC equality) and SEC-NIST-01 (stack trace exposure in error response), provides constant-time equality check (crypto.timingSafeEqual) and sanitized error middleware.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Check our Dockerfile and Spring Boot application.yml: Dockerfile has `FROM openjdk:17` with no USER directive, and application.yml has `spring.jpa.hibernate.ddl-auto: update` and `DB_PASSWORD=production_secret_123` hardcoded. What baseline checks fail?",
+      "expected_output": "Flags SEC-ENG-03 (missing non-root container USER), SEC-ISO-03 (ddl-auto: update in config), and SEC-ISO-01 (hardcoded secret). Explains why PR must be blocked and provides remediations.",
+      "files": []
+    }
+  ]
+}
